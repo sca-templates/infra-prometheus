@@ -153,7 +153,8 @@
   },
   "material-icon-theme.folders.associations": {
     "scripts": "tools",
-    "data": "database"
+    "data": "database",
+    "handbook": "docs"
   },
 
   // =========================
