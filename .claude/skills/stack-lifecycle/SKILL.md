@@ -1,0 +1,31 @@
+---
+name: stack-lifecycle
+description: Start, stop and troubleshoot the Prometheus stack. Use when the user asks to make up/down/stop/restart, check health or targets, or fix a target that is not up or a Vault token mount issue.
+---
+
+# Stack lifecycle
+
+- `make up` / `make all` — compose up + `wait-healthy.sh prometheus`
+- `make down` — stop and remove containers
+- `make stop` / `make restart` — stop without removing / down + up
+- `make ps` — container status
+- `make logs` — follow logs
+- `make clean` — `down -v` + remove `.env` and volumes (asks confirmation)
+
+## Health checks
+
+- `curl <http://127.0.0.1:9090/-/healthy>`
+- `curl '<http://127.0.0.1:9090/api/v1/targets>'` — all targets up (kong may
+  be down until `kong/` exists)
+
+## Troubleshooting
+
+- Target not up: check the exporter container logs and that the port is bound
+  on `127.0.0.1`.
+- Vault token: `/etc/prometheus/vault-token` is mounted from
+  `../vault/data/secrets/root-token.txt`; after Vault re-init (`make clean`),
+  re-run `make up` to remount it.
+- Kafka Connect JMX: requires `JMXPORT=8778` on `kafka-connect` in
+  `kafka/docker-compose.yml`.
+- redis/vault not reachable by name: they are NOT on `kafka-network`, reach
+  them via `host.docker.internal`.

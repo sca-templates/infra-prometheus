@@ -26,6 +26,11 @@ versions): `../ansible/roles/observability/`. Full spec: `../prometheus.md`.
 - `.env.example` — non-secret vars and ports; `.env` is generated, gitignored.
 - `.github/` — CI (`validate.yml`), PR template, CONTRIBUTING, dependabot.
 - `.mcp.json` + `.claude/` — Claude Code + codegraph MCP wiring.
+- `.claude/skills/` — shared AI skills (`prometheus-validate`,
+  `add-scrape-target`, `promql`, `stack-lifecycle`); registered for opencode
+  via `opencode.jsonc` (`skills.paths`), so every agent uses the same files.
+- `opencode.jsonc` + `.opencode/` — opencode project config, MCP and
+  `/validate`, `/up`, `/down`, `/ps` commands.
 - `docs/handbook/` — runbooks / AI handbooks for this service.
 - `0.Project_info/` — user tooling (commit/merge/prompt flows); do not touch.
 

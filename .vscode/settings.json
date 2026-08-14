@@ -154,7 +154,10 @@
   "material-icon-theme.folders.associations": {
     "scripts": "tools",
     "data": "database",
-    "handbook": "docs"
+    "handbook": "docs",
+    "opencode": "opencode",
+    "claude": "claude",
+    "skills": "skills"
   },
 
   // =========================

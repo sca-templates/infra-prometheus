@@ -54,7 +54,7 @@ scripts/                 vault-secrets.sh | gen-env.sh | validate.sh
 make validate
 
 # Lint markdown
-npx --yes markdownlint-cli2 README.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md
+npx --yes markdownlint-cli2 README.md AGENTS.md CLAUDE.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md docs/handbook/README.md .claude/skills/**/SKILL.md .opencode/command/*.md
 
 # Check links in a single file (config lives in .github/)
 npx --yes markdown-link-check -c .github/markdown-link-check.json <file>
