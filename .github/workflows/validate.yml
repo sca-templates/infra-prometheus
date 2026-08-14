@@ -73,11 +73,11 @@ jobs:
           node-version: 20
 
       - name: markdownlint
-        run: npx --yes markdownlint-cli2 README.md AGENTS.md CLAUDE.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md docs/handbook/README.md .claude/skills/**/SKILL.md .opencode/command/*.md
+        run: npx --yes markdownlint-cli2 README.md AGENTS.md CLAUDE.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md docs/**/*.md .claude/skills/**/SKILL.md .opencode/command/*.md
 
       - name: Check links
         run: |
-          for f in README.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md docs/handbook/README.md; do
+          for f in README.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md; do
             npx --yes markdown-link-check \
               -c .github/markdown-link-check.json \
               "$f"

@@ -4,13 +4,39 @@ Prometheus observability for the local `aws/` monorepo. Follow the sibling
 patterns exactly (`kafka/`, `consul/`, `vault/`) — this repo is a copy-paste
 evolution of them.
 
+## Ecosystem documentation (sca-docs)
+
+The ecosystem docs live in the
+[sca-docs](https://github.com/sca-node-template/sca-docs) repository — the
+single source of truth for ecosystem topology and conventions. Consult it
+before writing or editing anything about topology, ports, networks, or
+conventions. Principle: **one fact, one place** — depth lives in this repo,
+topology/maps in the vault, pointers in READMEs.
+
+- [04-infrastructure/INDEX.md](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/INDEX.md) — infrastructure catalog
+- [00-ecosystem/conventions.md](https://github.com/sca-node-template/sca-docs/blob/main/00-ecosystem/conventions.md) — naming, links, catalogs
+- [00-ecosystem/HOME.md](https://github.com/sca-node-template/sca-docs/blob/main/00-ecosystem/HOME.md) — vault entry point
+- [README.md](https://github.com/sca-node-template/sca-docs/blob/main/README.md) — ecosystem vision + repository map
+- [03-connections-map/connection-map.md](https://github.com/sca-node-template/sca-docs/blob/main/03-connections-map/connection-map.md) — ecosystem graph
+- [99-glossary/INDEX.md](https://github.com/sca-node-template/sca-docs/blob/main/99-glossary/INDEX.md) — ubiquitous language
+- [CONTRIBUTING.md](https://github.com/sca-node-template/sca-docs/blob/main/CONTRIBUTING.md) — vault conventions and definition of done
+
+Fetch them via the web, the GitHub API/MCP, or the raw URLs
+(`https://raw.githubusercontent.com/sca-node-template/sca-docs/main/<path>`).
+Do not rely on a local checkout of `sca-docs`.
+
+Keep the vault in sync: if a change materially alters this component (ports,
+scrape jobs, exporters, network), update the corresponding vault note and open
+a PR in `sca-docs` — or flag it in this repo's PR.
+
 ## Project
 
 Central Prometheus TSDB (30-day retention) scraping Vault, Consul, Postgres,
 Redis, Kafka Connect (Debezium CDC) and future NestJS microservices, with
 bundled postgres-exporter, redis-exporter and a JMX exporter for Kafka Connect.
 UI: <http://127.0.0.1:9090> (loopback only). Production reference (same image
-versions): `../ansible/roles/observability/`. Full spec: `../prometheus.md`.
+versions): `../ansible/roles/observability/`. Full spec: the canonical note in
+the sca-docs vault ([infrastructure catalog](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/INDEX.md)).
 
 ## Layout
 
@@ -31,7 +57,8 @@ versions): `../ansible/roles/observability/`. Full spec: `../prometheus.md`.
   via `opencode.jsonc` (`skills.paths`), so every agent uses the same files.
 - `opencode.jsonc` + `.opencode/` — opencode project config, MCP and
   `/validate`, `/up`, `/down`, `/ps` commands.
-- `docs/handbook/` — runbooks / AI handbooks for this service.
+- `docs/` — conceptual docs (architecture, data sources); operational content
+  and troubleshooting live in `README.md`.
 - `0.Project_info/` — user tooling (commit/merge/prompt flows); do not touch.
 
 ## Commands

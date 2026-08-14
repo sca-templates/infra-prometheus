@@ -66,6 +66,21 @@ Temporary Items
 # clone and drop obsidian-api-key + github-token there.
 .secrets/
 
+### Obsidian ###
+# Obsidian vault configuration and internal metadata
+.obsidian/
+
+# Local cache and temporary files managed by Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/workspace-old.json
+
+# Obsidian plugins and local data
+.obsidian/plugins/
+.obsidian/themes/
+.obsidian/workspace
+
 ### Custom ###
 # Tooling deps (opencode/claude runtime install under .opencode/ etc.)
 0.Project_info
