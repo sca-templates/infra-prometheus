@@ -68,6 +68,8 @@ Temporary Items
 
 ### Custom ###
 # Tooling deps (opencode/claude runtime install under .opencode/ etc.)
+0.Project_info
+context/structure.txt
 node_modules/
 .codegraph/
 
