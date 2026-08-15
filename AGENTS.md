@@ -81,9 +81,14 @@ the sca-docs vault ([infrastructure catalog](https://github.com/sca-node-templat
 - Vault token mounted read-only: `../vault/data/secrets/root-token.txt` →
   `/etc/prometheus/vault-token`. After Vault re-init (`make clean`) the token
   changes: re-run `make up` to remount it.
-- Network: `kafka-network` is external (name resolution). `redis` and `vault`
-  are NOT on it → reached via `host.docker.internal` (`extra_hosts:
-  host-gateway`).
+- Network: `prometheus` runs on the **host network** (`network_mode: host`) and
+  binds its UI to loopback (`--web.listen-address=127.0.0.1:9090`); it scrapes
+  every target via published `127.0.0.1:<port>`. Host-network mode is required
+  because the host firewall (UFW) drops Docker-bridge → host-network traffic
+  (Consul on `network_mode: host` would be unreachable otherwise). The
+  **exporters** join the external `kafka-network` (name resolution);
+  `redis` is NOT on it → reached by redis-exporter via `host.docker.internal`
+  (`extra_hosts: host-gateway`).
 - Consul registers services with TCP checks on `127.0.0.1:<port>` in
   `../consul/scripts/register-services.sh` and validates them in
   `../consul/scripts/validate.sh`.
@@ -91,6 +96,9 @@ the sca-docs vault ([infrastructure catalog](https://github.com/sca-node-templat
   **commented** until a real target exists (`apache/kafka:3.7.1` ignores
   `KAFKA_JMX_PORT`; do not add fragile `KAFKA_OPTS`). Never touch the running
   kafka stack.
+- The `vault` scrape returns `400 prometheus is not enabled` until the `vault/`
+  config adds `telemetry { prometheus_retention_time = "24h" }` to the HCL
+  files; the target is tolerated in `scripts/validate.sh` until then.
 - Content in English; changes land through a PR.
 
 ## CodeGraph

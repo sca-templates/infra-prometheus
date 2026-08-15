@@ -4,40 +4,42 @@
 
 ## Global config
 
-| Setting | Value |
-|---|---|
-| `scrape_interval` | 15s |
-| `evaluation_interval` | 15s |
-| `external_labels` | `project=sca`, `environment=dev` |
+| Setting               | Value                            |
+| --------------------- | -------------------------------- |
+| `scrape_interval`     | 15s                              |
+| `evaluation_interval` | 15s                              |
+| `external_labels`     | `project=sca`, `environment=dev` |
 
 ## Scrape jobs
 
-| Job | Target | `metrics_path` / params | Notes |
-|---|---|---|---|
-| prometheus | `localhost:9090` | default `/metrics` | self-scrape |
-| vault | `host.docker.internal:8201` | `/v1/sys/metrics`, `params.format=prometheus`, `scheme: https`, `tls_config.insecure_skip_verify` | `bearer_token_file: /etc/prometheus/vault-token` |
-| consul | `host.docker.internal:8500` | `/v1/agent/metrics`, `params.format=prometheus` | |
-| kong | `kong:8001` | `/metrics` | tolerated down until `kong/` exists |
-| postgres-exporter | `postgres-exporter:9187` | default `/metrics` | `pg_*` metrics |
-| redis-exporter | `redis-exporter:9121` | default `/metrics` | `redis_*` metrics |
-| kafka-connect | `kafka-connect-exporter:9309` | default `/metrics` | JMX rules in `kafka-connect-jmx.yml` |
-| kafka | `kafka-exporter:9308` | default `/metrics` | **commented** — best-effort broker |
-| ms-auth | `host.docker.internal:9101` | `/metrics` | **commented** until the service exists |
-| ms-notifications | `host.docker.internal:9102` | `/metrics` | **commented** until the service exists |
-| ms-logging | `host.docker.internal:9103` | `/metrics` | **commented** until the service exists |
-| ms-ai | `host.docker.internal:9104` | `/metrics` | **commented** until the service exists |
+| Job               | Target          | `metrics_path` / params                                                                           | Notes                                            |
+| ----------------- | --------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| prometheus        | `localhost:9090` | default `/metrics`                                                                                | self-scrape                                      |
+| vault             | `127.0.0.1:8201` | `/v1/sys/metrics`, `params.format=prometheus`, `scheme: https`, `tls_config.insecure_skip_verify` | `bearer_token_file: /etc/prometheus/vault-token`; tolerated down until Vault enables `telemetry.prometheus_retention_time` |
+| consul            | `127.0.0.1:8500` | `/v1/agent/metrics`, `params.format=prometheus`                                                   |                                                  |
+| kong              | `kong:8001`      | `/metrics`                                                                                        | tolerated down until `kong/` exists              |
+| postgres-exporter | `127.0.0.1:9187` | default `/metrics`                                                                                | `pg_*` metrics                                   |
+| redis-exporter    | `127.0.0.1:9121` | default `/metrics`                                                                                | `redis_*` metrics                                |
+| kafka-connect     | `127.0.0.1:9309` | default `/metrics`                                                                                | JMX rules in `kafka-connect-jmx.yml`             |
+| kafka             | `127.0.0.1:9308` | default `/metrics`                                                                                | **commented** — best-effort broker               |
+| ms-auth           | `127.0.0.1:9101` | `/metrics`                                                                                        | **commented** until the service exists           |
+| ms-notifications  | `127.0.0.1:9102` | `/metrics`                                                                                        | **commented** until the service exists           |
+| ms-logging        | `127.0.0.1:9103` | `/metrics`                                                                                        | **commented** until the service exists           |
+| ms-ai             | `127.0.0.1:9104` | `/metrics`                                                                                        | **commented** until the service exists           |
+
+Prometheus runs on the host network, so every scrape target is a published `127.0.0.1:<port>` (exporters publish on loopback) except `kong`, which stays a host-network name and is tolerated down.
 
 ## Metric namespaces
 
-| Prefix | Source |
-|---|---|
-| `up`, `scrape_duration_seconds`, `scrape_samples_scraped` | Prometheus, per-target |
-| `prometheus_tsdb_*`, `prometheus_engine_*` | Prometheus self-scrape |
-| `vault_*` | Vault `/v1/sys/metrics` |
-| `consul_*` | Consul `/v1/agent/metrics` |
-| `pg_*` | postgres-exporter |
-| `redis_*` | redis-exporter |
-| `kafka_connect_*`, `debezium_*` | JMX exporter for Kafka Connect |
+| Prefix                                                    | Source                         |
+| --------------------------------------------------------- | ------------------------------ |
+| `up`, `scrape_duration_seconds`, `scrape_samples_scraped` | Prometheus, per-target         |
+| `prometheus_tsdb_*`, `prometheus_engine_*`                | Prometheus self-scrape         |
+| `vault_*`                                                 | Vault `/v1/sys/metrics`        |
+| `consul_*`                                                | Consul `/v1/agent/metrics`     |
+| `pg_*`                                                    | postgres-exporter              |
+| `redis_*`                                                 | redis-exporter                 |
+| `kafka_connect_*`, `debezium_*`                           | JMX exporter for Kafka Connect |
 
 ## Commented jobs policy
 

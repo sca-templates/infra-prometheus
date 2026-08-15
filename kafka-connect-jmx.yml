@@ -1,0 +1,15 @@
+startDelaySeconds: 0
+hostPort: kafka-connect:8778
+ssl: false
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+rules:
+  - pattern: "debezium.<type>:type=connector-metrics,context=<context>,server=<server>,<attr>"
+    name: debezium_<context>_<attr>
+  - pattern: "debezium.<type>:type=connector-metrics,context=<context>,server=<server>"
+    name: debezium_metrics_count
+  - pattern: "kafka.connect:type=connector-metrics,connector=<connector>,<attr>"
+    name: kafka_connect_connector_<attr>
+  - pattern: "kafka.connect:type=task-metrics,connector=<connector>,task=<task>,<attr>"
+    name: kafka_connect_task_<attr>

@@ -133,7 +133,8 @@
     "kafka-network",
     "kafka-connect",
     "kafka-connect-exporter",
-    "postgres-app-db"
+    "postgres-app-db",
+    "shellcheck"
   ],
 
   // =========================

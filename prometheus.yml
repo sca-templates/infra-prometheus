@@ -1,0 +1,79 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    project: sca
+    environment: dev
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+
+  - job_name: vault
+    scheme: https
+    metrics_path: /v1/sys/metrics
+    params:
+      format:
+        - prometheus
+    tls_config:
+      insecure_skip_verify: true
+    bearer_token_file: /etc/prometheus/vault-token
+    static_configs:
+      - targets:
+          - 127.0.0.1:8201
+
+  - job_name: consul
+    metrics_path: /v1/agent/metrics
+    params:
+      format:
+        - prometheus
+    static_configs:
+      - targets:
+          - 127.0.0.1:8500
+
+  - job_name: kong
+    static_configs:
+      - targets:
+          - kong:8001
+
+  - job_name: postgres-exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9187
+
+  - job_name: redis-exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9121
+
+  - job_name: kafka-connect
+    static_configs:
+      - targets:
+          - 127.0.0.1:9309
+
+  # - job_name: kafka
+  #   static_configs:
+  #     - targets:
+  #         - 127.0.0.1:9308
+
+  # - job_name: ms-auth
+  #   static_configs:
+  #     - targets:
+  #         - 127.0.0.1:9101
+
+  # - job_name: ms-notifications
+  #   static_configs:
+  #     - targets:
+  #         - 127.0.0.1:9102
+
+  # - job_name: ms-logging
+  #   static_configs:
+  #     - targets:
+  #         - 127.0.0.1:9103
+
+  # - job_name: ms-ai
+  #   static_configs:
+  #     - targets:
+  #         - 127.0.0.1:9104

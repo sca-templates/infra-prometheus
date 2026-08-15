@@ -1,0 +1,86 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    restart: unless-stopped
+    user: "0:0"
+    network_mode: host
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+      - --web.listen-address=127.0.0.1:${PROMETHEUS_PORT:-9090}
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-dev}
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./kafka-connect-jmx.yml:/etc/prometheus/kafka-connect-jmx.yml:ro
+      - ../vault/data/secrets/root-token.txt:/etc/prometheus/vault-token:ro
+      - prometheus_data:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${PROMETHEUS_PORT:-9090}/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-exporter
+    restart: unless-stopped
+    environment:
+      - DATA_SOURCE_NAME=${DATA_SOURCE_NAME:-}
+    ports:
+      - "127.0.0.1:${POSTGRES_EXPORTER_PORT:-9187}:9187"
+    networks:
+      - kafka-network
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis-exporter
+    restart: unless-stopped
+    environment:
+      - REDIS_ADDR=${REDIS_ADDR:-host.docker.internal:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${REDIS_EXPORTER_PORT:-9121}:9121"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - kafka-network
+
+  kafka-connect-exporter:
+    image: bitnamilegacy/jmx-exporter:0.20.0
+    container_name: kafka-connect-exporter
+    restart: unless-stopped
+    command:
+      - "9309"
+      - /opt/bitnami/jmx-exporter/kafka-connect-jmx.yml
+    volumes:
+      - ./kafka-connect-jmx.yml:/opt/bitnami/jmx-exporter/kafka-connect-jmx.yml:ro
+    ports:
+      - "127.0.0.1:${KAFKA_CONNECT_EXPORTER_PORT:-9309}:9309"
+    networks:
+      - kafka-network
+
+  # kafka-exporter:
+  #   image: bitnamilegacy/jmx-exporter:0.20.0
+  #   container_name: kafka-exporter
+  #   restart: unless-stopped
+  #   command:
+  #     - "9308"
+  #     - /opt/bitnami/jmx-exporter/kafka-connect-jmx.yml
+  #   volumes:
+  #     - ./kafka-connect-jmx.yml:/opt/bitnami/jmx-exporter/kafka-connect-jmx.yml:ro
+  #   ports:
+  #     - "127.0.0.1:${KAFKA_EXPORTER_PORT:-9308}:9308"
+  #   networks:
+  #     - kafka-network
+
+networks:
+  kafka-network:
+    external: true
+
+volumes:
+  prometheus_data:

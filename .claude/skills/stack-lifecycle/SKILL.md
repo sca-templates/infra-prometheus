@@ -21,11 +21,12 @@ description: Start, stop and troubleshoot the Prometheus stack. Use when the use
 ## Troubleshooting
 
 - Target not up: check the exporter container logs and that the port is bound
-  on `127.0.0.1`.
+  on `127.0.0.1` (prometheus runs on the host network, exporters publish on
+  loopback).
 - Vault token: `/etc/prometheus/vault-token` is mounted from
   `../vault/data/secrets/root-token.txt`; after Vault re-init (`make clean`),
   re-run `make up` to remount it.
 - Kafka Connect JMX: requires `JMXPORT=8778` on `kafka-connect` in
   `kafka/docker-compose.yml`.
-- redis/vault not reachable by name: they are NOT on `kafka-network`, reach
-  them via `host.docker.internal`.
+- redis is NOT on `kafka-network`: redis-exporter reaches it via
+  `host.docker.internal` (`extra_hosts: host-gateway`).

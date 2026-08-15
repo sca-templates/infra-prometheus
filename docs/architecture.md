@@ -8,15 +8,15 @@ The Prometheus stack is a Docker Compose deployment inside `aws/prometheus/`, li
 
 ## Components
 
-| Container | Image | Host port | Network | Purpose |
-|---|---|---|---|---|
-| prometheus | `prom/prometheus:v2.53.0` | 127.0.0.1:9090 | kafka-network + host-gateway | TSDB, UI and API |
-| postgres-exporter | `prometheuscommunity/postgres-exporter:v0.15.0` | 127.0.0.1:9187 | kafka-network | Postgres metrics via `postgres-app-db:5432` |
-| redis-exporter | `oliver006/redis_exporter:v1.62.0` | 127.0.0.1:9121 | kafka-network + host-gateway | Redis metrics via `host.docker.internal:6379` |
-| kafka-connect-exporter | `bitnami/jmx-exporter:0.20.0` | 127.0.0.1:9309 | kafka-network | JMX metrics of Kafka Connect (Debezium CDC) |
-| kafka-exporter | `bitnami/jmx-exporter:0.20.0` | 127.0.0.1:9308 | kafka-network | Broker JMX — not deployed (best-effort, see [data-sources](data-sources.md)) |
+| Container              | Image                                           | Host port      | Network                      | Purpose                                                                      |
+| ---------------------- | ----------------------------------------------- | -------------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| prometheus             | `prom/prometheus:v2.53.0`                       | 127.0.0.1:9090 | host network (loopback)       | TSDB, UI and API                                                             |
+| postgres-exporter      | `prometheuscommunity/postgres-exporter:v0.15.0` | 127.0.0.1:9187 | kafka-network                | Postgres metrics via `postgres-app-db:5432`                                  |
+| redis-exporter         | `oliver006/redis_exporter:v1.62.0`              | 127.0.0.1:9121 | kafka-network + host-gateway | Redis metrics via `host.docker.internal:6379`                                |
+| kafka-connect-exporter | `bitnamilegacy/jmx-exporter:0.20.0`             | 127.0.0.1:9309 | kafka-network                | JMX metrics of Kafka Connect (Debezium CDC)                                  |
+| kafka-exporter         | `bitnamilegacy/jmx-exporter:0.20.0`             | 127.0.0.1:9308 | kafka-network                | Broker JMX — not deployed (best-effort, see [data-sources](data-sources.md)) |
 
-Image versions match the production reference in `ansible/roles/observability/`.
+`bitnami/jmx-exporter:0.20.0` no longer exists on Docker Hub (the `bitnami/` repo is now paid-only); the free `bitnamilegacy/jmx-exporter:0.20.0` image is used instead, running `java -jar jmx_prometheus_httpserver.jar <port> <config>`.
 
 ## Data flow
 
@@ -50,8 +50,9 @@ Solid edges are active scrapes. Dotted edges are scrape jobs that stay commented
 
 ## Networking
 
-- The stack joins the shared external Docker network **`kafka-network`**; containers resolve each other by name (`postgres-exporter`, `kafka-connect-exporter`, `kong`).
-- **Redis and Vault are not on `kafka-network`**, so they are reached through the host: `extra_hosts: host.docker.internal:host-gateway` maps the Docker host into the containers, and the scrapes target `host.docker.internal:<port>`.
+- **Prometheus runs on the host network** (`network_mode: host`) and binds its UI/API to loopback only (`--web.listen-address=127.0.0.1:9090`). This is required because the host firewall (UFW, default deny) drops TCP from Docker bridges to host-network services — Consul (`network_mode: host`, port 8500) would otherwise be unreachable. Prometheus scrapes every target through `127.0.0.1:<published port>`.
+- The **exporters** join the shared external Docker network **`kafka-network`**: postgres-exporter resolves `postgres-app-db:5432` by name and kafka-connect-exporter resolves `kafka-connect:8778` by name.
+- **Redis** is not on `kafka-network`; redis-exporter reaches it through the host gateway (`extra_hosts: host.docker.internal:host-gateway`, `REDIS_ADDR=host.docker.internal:6379`).
 - All published ports bind to **loopback only** (`127.0.0.1`); nothing is exposed on the LAN.
 
 ## Storage and retention
@@ -73,7 +74,7 @@ Consul registers the stack services with TCP checks on `127.0.0.1:<port>`: `prom
 
 ## Production reference
 
-The same images, exporter ports and scrape endpoints run in production via `ansible/roles/observability/`. The local stack mirrors `prom/prometheus:v2.53.0`, 30-day retention, `--web.enable-lifecycle` and the `:9187` / `:9121` / `:9308` exporter ports where applicable.
+The same exporter ports and scrape endpoints run in production via `ansible/roles/observability/`. The local stack mirrors `prom/prometheus:v2.53.0`, 30-day retention, `--web.enable-lifecycle` and the `:9187` / `:9121` / `:9308` exporter ports where applicable. Note: the Ansible reference still pins `bitnami/jmx-exporter:0.20.0`, which no longer exists — production should adopt `bitnamilegacy/jmx-exporter:0.20.0` too.
 
 ## Related
 
