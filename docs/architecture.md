@@ -10,7 +10,7 @@ The Prometheus stack is a Docker Compose deployment inside `aws/prometheus/`, st
 
 | Container              | Image                                           | Host port      | Network                      | Purpose                                                                      |
 | ---------------------- | ----------------------------------------------- | -------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| prometheus             | `prom/prometheus:v2.53.0`                       | 127.0.0.1:9090 | host network (loopback)       | TSDB, UI and API                                                             |
+| prometheus             | `prom/prometheus:v2.53.0`                       | 127.0.0.1:9090 | host network (loopback)      | TSDB, UI and API                                                             |
 | postgres-exporter      | `prometheuscommunity/postgres-exporter:v0.15.0` | 127.0.0.1:9187 | kafka-network                | Postgres metrics via `postgres-app-db:5432`                                  |
 | redis-exporter         | `oliver006/redis_exporter:v1.62.0`              | 127.0.0.1:9121 | kafka-network + host-gateway | Redis metrics via `host.docker.internal:6379`                                |
 | kafka-connect-exporter | `bitnamilegacy/jmx-exporter:0.20.0`             | 127.0.0.1:9309 | kafka-network                | JMX metrics of Kafka Connect (Debezium CDC)                                  |

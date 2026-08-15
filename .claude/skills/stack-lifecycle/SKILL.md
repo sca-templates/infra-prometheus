@@ -15,10 +15,9 @@ description: Start, stop and troubleshoot the Prometheus stack. Use when the use
 ## Health checks
 
 - `curl <http://127.0.0.1:9090/-/healthy>`
-- `curl '<http://127.0.0.1:9090/api/v1/targets>'` — targets up except:
-  - kong (until `kong/` exists)
-  - vault (`400 prometheus is not enabled` until the `vault/` config enables
-    `telemetry.prometheus_retention_time`) — both tolerated in `validate.sh`
+- `curl '<http://127.0.0.1:9090/api/v1/targets>'` — targets up except kong
+  (until `kong/` exists) and possibly kafka-connect (until `JMXPORT=8778` is
+  set on `kafka-connect`) — both tolerated in `validate.sh`
 
 ## Troubleshooting
 

@@ -96,9 +96,10 @@ the sca-docs vault ([infrastructure catalog](https://github.com/sca-node-templat
   **commented** until a real target exists (`apache/kafka:3.7.1` ignores
   `KAFKA_JMX_PORT`; do not add fragile `KAFKA_OPTS`). Never touch the running
   kafka stack.
-- The `vault` scrape returns `400 prometheus is not enabled` until the `vault/`
-  config adds `telemetry { prometheus_retention_time = "24h" }` to the HCL
-  files; the target is tolerated in `scripts/validate.sh` until then.
+- The `vault` scrape is **strict** in `scripts/validate.sh`; it works because
+  the `vault/` HCL config sets `telemetry { prometheus_retention_time = "24h" }`.
+  Only `kong` (no stack yet) and `kafka-connect` (needs `JMXPORT=8778`) are
+  tolerated down.
 - Content in English; changes land through a PR.
 
 ## CodeGraph

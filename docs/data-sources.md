@@ -12,10 +12,10 @@
 
 ## Scrape jobs
 
-| Job               | Target          | `metrics_path` / params                                                                           | Notes                                            |
-| ----------------- | --------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Job               | Target           | `metrics_path` / params                                                                           | Notes                                            |
+| ----------------- | ---------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | prometheus        | `localhost:9090` | default `/metrics`                                                                                | self-scrape                                      |
-| vault             | `127.0.0.1:8201` | `/v1/sys/metrics`, `params.format=prometheus`, `scheme: https`, `tls_config.insecure_skip_verify` | `bearer_token_file: /etc/prometheus/vault-token`; tolerated down until Vault enables `telemetry.prometheus_retention_time` |
+| vault             | `127.0.0.1:8201` | `/v1/sys/metrics`, `params.format=prometheus`, `scheme: https`, `tls_config.insecure_skip_verify` | `bearer_token_file: /etc/prometheus/vault-token` |
 | consul            | `127.0.0.1:8500` | `/v1/agent/metrics`, `params.format=prometheus`                                                   |                                                  |
 | kong              | `kong:8001`      | `/metrics`                                                                                        | tolerated down until `kong/` exists              |
 | postgres-exporter | `127.0.0.1:9187` | default `/metrics`                                                                                | `pg_*` metrics                                   |
@@ -35,15 +35,11 @@ Prometheus runs on the host network, so every scrape target is a published `127.
 | --------------------------------------------------------- | ------------------------------ |
 | `up`, `scrape_duration_seconds`, `scrape_samples_scraped` | Prometheus, per-target         |
 | `prometheus_tsdb_*`, `prometheus_engine_*`                | Prometheus self-scrape         |
-| `vault_*` †                                               | Vault `/v1/sys/metrics`        |
+| `vault_*`                                                 | Vault `/v1/sys/metrics`        |
 | `consul_*`                                                | Consul `/v1/agent/metrics`     |
 | `pg_*`                                                    | postgres-exporter              |
 | `redis_*`                                                 | redis-exporter                 |
 | `kafka_connect_*`, `debezium_*`                           | JMX exporter for Kafka Connect |
-
-† Not flowing yet: Vault serves `/v1/sys/metrics?format=prometheus` only after
-`telemetry { prometheus_retention_time }` is added to the `vault/` HCL config
-(the job is active but tolerated down until then).
 
 ## Commented jobs policy
 

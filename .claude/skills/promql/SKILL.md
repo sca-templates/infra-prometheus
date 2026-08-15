@@ -15,8 +15,7 @@ Prometheus UI: <http://127.0.0.1:9090> (loopback only).
 ## Metric cheat sheet
 
 - `up`, `scrape_duration_seconds`, `scrape_samples_scraped`
-- `vault_*` (Vault `/v1/sys/metrics` — not flowing until the `vault/` config
-  enables telemetry), `consul_*` (Consul `/v1/agent/metrics`)
+- `vault_*` (Vault `/v1/sys/metrics`), `consul_*` (Consul `/v1/agent/metrics`)
 - `pg_*` (postgres-exporter), `redis_*` (redis-exporter)
 - `kafka_connect_*` / `debezium_*` (JMX exporter for Kafka Connect)
 - Prometheus self: `prometheus_tsdb_*`, `prometheus_engine_*`

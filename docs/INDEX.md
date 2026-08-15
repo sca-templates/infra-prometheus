@@ -12,4 +12,4 @@
 ## Related
 
 - Component README: [../README.md](../README.md)
-- Vault note (canonical): [04-infrastructure/prometheus.md (sca-docs)](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/INDEX.md)
+- Vault note (canonical): [04-infrastructure/prometheus.md (sca-docs)](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/prometheus.md)

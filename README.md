@@ -55,15 +55,15 @@ On subsequent starts `make up` is enough.
 
 ## Scrape targets
 
-| Job               | Target           | Notes                                                                             |
-| ----------------- | ---------------- | --------------------------------------------------------------------------------- |
-| prometheus        | `localhost:9090` | self-scrape                                                                       |
-| vault             | `127.0.0.1:8201` | `https`, bearer token; tolerated down until the `vault/` config enables telemetry |
-| consul            | `127.0.0.1:8500` | `/v1/agent/metrics?format=prometheus`                                             |
-| kong              | `kong:8001`      | tolerated down until `kong/` exists                                               |
-| postgres-exporter | `127.0.0.1:9187` | `pg_*` metrics                                                                    |
-| redis-exporter    | `127.0.0.1:9121` | `redis_*` metrics                                                                 |
-| kafka-connect     | `127.0.0.1:9309` | JMX rules in `kafka-connect-jmx.yml`                                              |
+| Job               | Target           | Notes                                 |
+| ----------------- | ---------------- | ------------------------------------- |
+| prometheus        | `localhost:9090` | self-scrape                           |
+| vault             | `127.0.0.1:8201` | `https`, bearer token                 |
+| consul            | `127.0.0.1:8500` | `/v1/agent/metrics?format=prometheus` |
+| kong              | `kong:8001`      | tolerated down until `kong/` exists   |
+| postgres-exporter | `127.0.0.1:9187` | `pg_*` metrics                        |
+| redis-exporter    | `127.0.0.1:9121` | `redis_*` metrics                     |
+| kafka-connect     | `127.0.0.1:9309` | JMX rules in `kafka-connect-jmx.yml`  |
 
 Commented until a real target exists: broker kafka-exporter (`127.0.0.1:9308`)
 and microservice jobs (`127.0.0.1:9101`–`9104`). Full details in
@@ -100,15 +100,14 @@ After a Vault re-init (`make clean` in `../vault`) the token changes: re-run
 
 ## Troubleshooting
 
-| Symptom                                                  | Probable cause                                                  | Fix                                                               |
-| -------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `up{job="vault"} == 0` (`400 prometheus is not enabled`) | `vault/` config lacks `telemetry { prometheus_retention_time }` | Add it to the HCL config and restart Vault (tolerated until then) |
-| `up{job="kong"} == 0` (`no such host`)                   | `kong/` stack doesn't exist yet                                 | Expected; tolerated down                                          |
-| `up{job="consul"} == 0` (timeout)                        | UFW drops container→host traffic                                | Prometheus is on host network for this reason; check `make ps`    |
-| `up{job="kafka-connect"} == 0`                           | JMX not enabled on `kafka-connect`                              | Set `JMXPORT=8778` in `kafka/docker-compose.yml`                  |
-| Token file unreadable / `permission denied`              | Prometheus container ran as `nobody`                            | Compose pins `user: "0:0"`; re-run `make up`                      |
-| `make env` can't find the token                          | Vault is not running/unsealed                                   | `cd ../vault && make dev`                                         |
-| Stale duplicate series for a job                         | Old instance labels from a previous config                      | They expire after 5 min; `validate.sh` uses `count(up{job=…}==1)` |
+| Symptom                                     | Probable cause                             | Fix                                                               |
+| ------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| `up{job="kong"} == 0` (`no such host`)      | `kong/` stack doesn't exist yet            | Expected; tolerated down                                          |
+| `up{job="consul"} == 0` (timeout)           | UFW drops container→host traffic           | Prometheus is on host network for this reason; check `make ps`    |
+| `up{job="kafka-connect"} == 0`              | JMX not enabled on `kafka-connect`         | Set `JMXPORT=8778` in `kafka/docker-compose.yml`                  |
+| Token file unreadable / `permission denied` | Prometheus container ran as `nobody`       | Compose pins `user: "0:0"`; re-run `make up`                      |
+| `make env` can't find the token             | Vault is not running/unsealed              | `cd ../vault && make dev`                                         |
+| Stale duplicate series for a job            | Old instance labels from a previous config | They expire after 5 min; `validate.sh` uses `count(up{job=…}==1)` |
 
 ## Structure
 

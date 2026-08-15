@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # validate.sh — Static + runtime validation of the Prometheus stack.
 #   Mirrors .github/workflows/validate.yml plus live checks (health, up{}).
-#   Strict jobs must scrape; vault, kong and kafka-connect are tolerated down
-#   (vault needs telemetry.prometheus_retention_time in the vault/ config).
+#   Strict jobs must scrape; kong and kafka-connect are tolerated down
+#   (kong has no stack yet; kafka-connect needs JMXPORT=8778 on kafka-connect).
 # Usage: make validate
 set -euo pipefail
 
@@ -11,8 +11,8 @@ cd "$PROJECT_DIR"
 
 PROM_IMAGE="prom/prometheus:v2.53.0"
 PROM_URL="http://127.0.0.1:9090"
-STRICT_JOBS=(prometheus consul postgres-exporter redis-exporter)
-TOLERATED_JOBS=(vault kong kafka-connect)
+STRICT_JOBS=(prometheus vault consul postgres-exporter redis-exporter)
+TOLERATED_JOBS=(kong kafka-connect)
 
 FAIL=0
 

@@ -7,7 +7,6 @@ COMPOSE_FILE := compose.yml
 COMPOSE_PROJECT_NAME := prometheus
 COMPOSE := docker compose -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT_NAME)
 VAULT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))/../vault
-PROM_URL := http://127.0.0.1:9090
 
 .PHONY: help
 help:
