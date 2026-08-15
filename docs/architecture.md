@@ -4,7 +4,7 @@
 
 ## Overview
 
-The Prometheus stack is a Docker Compose deployment inside `aws/prometheus/`, lifted by the root orchestrator (`make all`). Prometheus pulls metrics from the stack's own components and a set of bundled exporters; the time series feed the Grafana dashboards.
+The Prometheus stack is a Docker Compose deployment inside `aws/prometheus/`, started locally with `make up` / `make all` (wiring into the root `aws/` orchestrator is pending). Prometheus pulls metrics from the stack's own components and a set of bundled exporters; the time series feed the Grafana dashboards.
 
 ## Components
 
@@ -70,7 +70,7 @@ Solid edges are active scrapes. Dotted edges are scrape jobs that stay commented
 
 ## Service registration
 
-Consul registers the stack services with TCP checks on `127.0.0.1:<port>`: `prometheus:9090`, `postgres-exporter:9187`, `redis-exporter:9121`, `kafka-connect-exporter:9309`.
+Consul is expected to register the stack services with TCP checks on `127.0.0.1:<port>` — `prometheus:9090`, `postgres-exporter:9187`, `redis-exporter:9121`, `kafka-connect-exporter:9309`. The registration (in `../consul/scripts/register-services.sh`) is pending the `consul/` pass.
 
 ## Production reference
 
@@ -80,4 +80,4 @@ The same exporter ports and scrape endpoints run in production via `ansible/role
 
 - [data-sources.md](data-sources.md) — scrape jobs and metric namespaces.
 - [README.md](../README.md) — commands, stack lifecycle and troubleshooting.
-- Vault note: [04-infrastructure/prometheus.md (sca-docs)](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/INDEX.md).
+- Vault note: [04-infrastructure/prometheus.md (sca-docs)](https://github.com/sca-node-template/sca-docs/blob/main/04-infrastructure/prometheus.md).

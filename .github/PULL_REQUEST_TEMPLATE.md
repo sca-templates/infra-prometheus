@@ -15,7 +15,7 @@
 - [ ] `.env.example` is updated when new variables are added.
 - [ ] No secrets or tokens are committed (`.env` stays gitignored).
 - [ ] `make validate` passes locally.
-- [ ] `promtool check config prometheus.yml` passes.
+- [ ] `promtool check config prometheus.yml` passes (via `make validate` / `docker run --entrypoint promtool …`).
 - [ ] `docker compose -f compose.yml config --quiet` passes.
 - [ ] `shellcheck scripts/*.sh` passes.
 - [ ] `npx --yes markdownlint-cli2 README.md AGENTS.md CLAUDE.md .github/PULL_REQUEST_TEMPLATE.md .github/CONTRIBUTING.md docs/**/*.md .claude/skills/**/SKILL.md .opencode/command/*.md` passes.

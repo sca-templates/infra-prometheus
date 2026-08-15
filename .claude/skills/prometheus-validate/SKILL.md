@@ -14,8 +14,12 @@ description: Validate the Prometheus stack configs and docs. Use when the user a
 1. Run `make validate` from the repo root.
 2. If it fails, isolate the problem with the individual checks:
    - shellcheck: `shellcheck scripts/*.sh`
-   - compose: `cp .env.example .env && docker compose -f compose.yml config --quiet`
-   - promtool: `docker exec prometheus promtool check config /etc/prometheus/prometheus.yml`
+   - compose: `docker compose -f compose.yml -p prometheus config --quiet`
+   - promtool: `docker run --rm --entrypoint promtool \
+     -v "$PWD/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+     prom/prometheus:v2.53.0 check config /etc/prometheus/prometheus.yml`
+     (the image ENTRYPOINT is `/bin/prometheus`, so promtool must run via
+     `--entrypoint promtool` — exactly like `scripts/validate.sh` does)
    - health: `curl <http://127.0.0.1:9090/-/healthy>`
    - sanity: `curl '<http://127.0.0.1:9090/api/v1/query?query=up>'`
 3. Common fixes:

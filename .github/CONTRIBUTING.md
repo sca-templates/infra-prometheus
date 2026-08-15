@@ -41,7 +41,7 @@ scripts/                 vault-secrets.sh | gen-env.sh | validate.sh
 - [ ] `.env.example` is updated when new variables are added.
 - [ ] No secrets or tokens are committed.
 - [ ] `make validate` passes locally.
-- [ ] `promtool check config prometheus.yml` passes.
+- [ ] `promtool check config prometheus.yml` passes (via `make validate` / `docker run --entrypoint promtool …`).
 - [ ] `docker compose -f compose.yml config --quiet` passes.
 - [ ] `shellcheck scripts/*.sh` passes.
 - [ ] `markdownlint` and link check pass (CI runs them too).

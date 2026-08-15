@@ -46,12 +46,7 @@ setup: vault-secrets env
 up:
 	@echo '=== Starting Prometheus stack ==='
 	$(COMPOSE) up -d
-	@echo '=== Waiting for prometheus to become healthy ==='
-	@for i in $$(seq 1 36); do \
-	  curl -sf $(PROM_URL)/-/healthy >/dev/null 2>&1 && { echo 'Prometheus is healthy.'; exit 0; }; \
-	  sleep 5; \
-	done
-	@echo 'ERROR: prometheus not healthy after 180s' && exit 1
+	../scripts/wait-healthy.sh prometheus
 
 .PHONY: validate
 validate:

@@ -13,7 +13,10 @@ commented until a real target exists.
 1. Configure the exporter or the service metrics endpoint (e.g. the JMX rules
    in `kafka-connect-jmx.yml` for Kafka Connect).
 2. Add or edit the job in `prometheus.yml`: `job_name`, `metrics_path`,
-   target and labels.
+   target and labels. Prometheus runs on the **host network**, so targets are
+   always `127.0.0.1:<published port>` — never `host.docker.internal` nor
+   `kafka-network` names (those are only for the exporters' own outbound
+   connections, not for scrape targets).
 3. Register the service in Consul: add `name:port` to `SERVICES` in
    `../consul/scripts/register-services.sh` and the name to `EXPECTED` in
    `../consul/scripts/validate.sh` (TCP checks on `127.0.0.1:<port>`).
