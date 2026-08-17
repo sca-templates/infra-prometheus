@@ -72,10 +72,10 @@ and microservice jobs (`127.0.0.1:9101`–`9104`). Full details in
 ## How the secrets flow works (local)
 
 1. `scripts/vault-secrets.sh` registers the `prometheus` AppRole in Vault.
-2. `scripts/gen-env.sh` (`make env`) reads `secret/api-template/dev` and
-   generates `.env` (gitignored, `chmod 600`) with `DATA_SOURCE_NAME`
-   (Postgres DSN rewritten to `postgres-app-db:5432`), `REDIS_ADDR` and
-   `REDIS_PASSWORD`.
+2. `scripts/gen-env.sh` (`make env`) reads `secret/postgres-app/dev` +
+   `secret/redis/dev` and generates `.env` (gitignored, `chmod 600`) with
+   `DATA_SOURCE_NAME` (Postgres DSN rewritten to `postgres-app-db:5432`),
+   `REDIS_ADDR` and `REDIS_PASSWORD`.
 3. Prometheus mounts the Vault root token read-only from
    `../vault/data/secrets/root-token.txt` → `/etc/prometheus/vault-token` and
    uses it as bearer token for the Vault scrape.

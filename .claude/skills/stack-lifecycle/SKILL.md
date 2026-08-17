@@ -29,5 +29,5 @@ description: Start, stop and troubleshoot the Prometheus stack. Use when the use
   re-run `make up` to remount it.
 - Kafka Connect JMX: requires `JMXPORT=8778` on `kafka-connect` in
   `kafka/docker-compose.yml`.
-- redis is NOT on `kafka-network`: redis-exporter reaches it via
-  `host.docker.internal` (`extra_hosts: host-gateway`).
+- redis IS on `kafka-network`: redis-exporter reaches it as `redis:6379`
+  (`REDIS_ADDR=redis:6379`, no host gateway).
